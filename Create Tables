@@ -1,0 +1,290 @@
+Create database  Hasvi_Orthopedic_Hospital;
+
+Use Hasvi_Orthopedic_Hospital;
+
+create table Hasvi_Hospital
+(
+H_id int identity(1,1) primary key,
+H_name varchar(150),
+H_phone int,
+H_address varchar(150),
+H_city varchar(50),
+H_state varchar(50),
+H_pincode varchar(15),
+H_country varchar(50),
+Admin_id int,
+constraint fkadmin Foreign key (Admin_id) References Admin
+);
+ 
+
+Create table Admin
+(
+Admin_id int identity(1,1) Primary Key Clustered,
+Admin_name varchar(50),
+Phone varchar(15),
+Email varchar(50) Unique,
+Address varchar(150)
+);
+
+
+create table Login
+(
+Username varchar(50) Unique,
+Password varchar(20),
+--Hint_Question varchar(50),
+--Hint_Answer varchar(50),
+User_Type varchar(20)    --(Patient,Doctor,Nurse,Staff,Admin)
+);
+
+
+create table Patient
+(
+Patient_id int identity(1,1) Primary Key Clustered ,
+P_User_id as 'HMHP'+RIGHT('00000000'+cast(Patient_id as varchar(20)),20) persisted Unique,
+Patient_name varchar(100),
+Age int,
+Gender varchar(10),
+Phone varchar(15),
+Street_Name varchar(200),
+City varchar(50),
+State varchar(50),
+Pincode int,
+E_mail varchar(70) Unique,
+Marital_Status varchar(50),
+disease varchar(250)
+);
+
+
+create table Doctor
+(
+Doctor_id int identity(1,1)Primary Key Clustered,
+Doctor_User_id AS 'HMHD'+RIGHT('00000000'+cast(Doctor_id as varchar(20)),20) persisted Unique,
+Doctor_name varchar(100),
+Age int,
+Gender varchar(10),
+Phone varchar(15),
+Street_Name varchar(200),
+City varchar(50),
+State varchar(50),
+Pincode int,
+E_mail varchar(70) Unique,
+Marital_Status varchar(50),
+Dept_id int foreign key references Department(Dept_id),
+Specialization varchar(100),
+Qualification varchar(100),
+Salary int,
+Designation varchar(50)
+);
+
+Create table Nurse
+(
+Nurse_id int identity(1,1) Primary Key Clustered,
+Nurse_User_id as 'HMHN'+RIGHT('00000000'+cast(Nurse_id as varchar(20)),20) persisted Unique,
+Nurse_name varchar(100),
+Age int,
+Gender varchar(10),
+Phone varchar(15),
+Street_Name varchar(200),
+City varchar(50),
+State varchar(50),
+Pincode int,
+E_mail varchar(70) Unique,
+Marital_Status varchar(50),
+Dept_id int foreign key references Department(Dept_id),
+Specialization varchar(100),
+Qualification varchar(100),
+Salary int,
+Designation varchar(50)
+);
+
+
+create table Appointment
+(
+Appoint_id int identity(1,1) Primary Key,
+Name varchar(50),
+Appoint_Date Date,
+Status varchar(50) Default 'Pending',
+Disease varchar(250)
+);
+
+create table OPD
+(
+OPD_ID int identity(1,1) Primary key clustered,
+OPD_Date Date Default (GETDATE()),
+Appoint_id int,
+Doctor_id int,
+Symptoms varchar(250),
+Lab_Prescription varchar(500),
+Diet_Advice varchar(500),
+Status varchar(50) default 'Done',
+Consultation_Charges int  Default 600,
+Patient_id int ,
+Medicine_Prescription varchar(250),
+foreign key (Patient_id) references Patient(Patient_id),foreign key (Appoint_id) references Appointment(Appoint_id), foreign key(Doctor_id) references Doctor(Doctor_id)
+);
+
+create table Staff
+(
+Staff_id int identity(1,1) Primary Key Clustered,
+Staff_User_id as 'HMHS'+RIGHT('00000000'+cast(Staff_id as varchar(20)),20) persisted Unique,
+Staff_name varchar(100),
+Age int,
+Gender varchar(10),
+Phone varchar(15),
+Street_Name varchar(200),
+City varchar(50),
+State varchar(50),
+Pincode int,
+E_mail varchar(70) Unique,
+Marital_Status varchar(50),
+Dept_id int foreign key references Department(Dept_id),
+Specialization varchar(100),
+Qualification varchar(100),
+Salary int,
+Designation varchar(50)
+);
+
+
+Create table Department
+(
+Dept_id int identity(101,1) Primary Key Clustered,
+Dept_name varchar(50)
+);
+
+Create table Payroll
+(
+Payroll_id int identity(10000,1) Primary Key Clustered,
+Emp_id varchar(24), 
+Salary int,
+--Hourly_Salary int,
+--Bonus_Salary int,
+--Account_No int,
+--Total_Leave int,
+--Net_Salary int default Salary-
+Dept_id int , 
+constraint fc1 foreign key (Dept_id) references Department (Dept_id), constraint fc2 foreign key (Emp_id) references Doctor (Doctor_User_id),
+constraint fc3 foreign key (Emp_id) references Nurse (Nurse_User_id) , constraint fc4 foreign key (Emp_id) references Staff (Staff_User_id)
+);
+
+create table Room
+(
+Room_id int identity(1,1) Primary Key clustered,
+Room_Number int,
+Bed_number int,
+Room_Category varchar(50),
+Floor varchar(20),
+Room_charges int,
+Room_Status varchar(20) Default 'Available'
+);
+
+Create Table Patient_Admission 
+(
+Admission_id int identity(1,1) Primary Key Clustered,
+Patient_id int foreign key References Patient(Patient_id),
+Room_id int foreign key references Room(Room_id),
+Admission_Date Date,
+Doctor_id int foreign key references Doctor(Doctor_id),
+Room_Entry_Date Datetime default getdate(),
+disease varchar(100),
+);
+
+Create Table Patient_Discharge
+(
+Patient_id int foreign key References Patient(Patient_id),
+Discharge_Date Date,
+Room_Exit_Date Datetime default getdate(),
+Room_id int foreign key references Room(Room_id),
+Lab_Test_id int foreign key references Lab_Test(Lab_Test_id)
+);
+
+
+
+Create table X_Ray_Test
+(
+X_Ray_id int identity(1001,1) Primary Key Clustered,
+Patient_id int foreign key references Patient(Patient_id),
+X_Ray_Test_name varchar(100),
+X_Ray_Date_Time DateTime Default GETDATE()
+);
+
+
+create table Lab_Test
+(
+Lab_Test_id int identity(10000,1) Primary Key Clustered,
+Patient_id int foreign key references Patient(Patient_id),
+Weight int,
+Test_Date Date,
+Test_name varchar(50),
+Amount int
+);
+
+
+
+create table Invoice
+(
+Inv_id int identity(1001,1) Primary Key Clustered,
+Invoice_Number as 'HMHI'+RIGHT('00000000'+cast(Inv_id as varchar(20)),20) persisted,
+Patient_id int foreign key references Patient(Patient_id),
+Invoice_Date Date,
+Doctor_Visiting_Charge int,
+Consultation_charge int,
+Room_Charges int,
+Surgery_Charges int Null,
+No_of_Days int ,--DEFAULT DATEDIFF(DAY,Admission_Date,Discharge_Date),
+Nursing_Charges int,
+Lab_Charges int,
+Medicine_Charges int,
+Advance_amount int,
+Total_Payment int,
+Other_Charges int  Null,
+Payment_Type varchar(20),
+Patient_name varchar(100)
+);
+
+Create table Category
+(
+Category_id int identity(1,1) Primary Key Clustered,
+Category_name varchar(50)
+);
+
+create table Supplier
+(
+Supplier_Id int identity(1000,1) Primary Key Clustered,
+Company_name varchar(100),
+Contact_name varchar(50),
+Address varchar(100),
+City varchar(50),
+Pincode int,
+Phone varchar(15),
+Email_Id varchar(50) Unique,
+Category_id int foreign key references Category (Category_id)
+);
+
+
+create table Product
+(
+Product_id int identity(1000,1) Primary Key Clustered,
+Product_name varchar(100),
+Price int,
+Category_id int,
+Qty int,
+Supplier_Id int,
+Tax float,
+constraint fk1 foreign key(Category_id) References Category(Category_id),Constraint fk2 Foreign key (Supplier_Id) references Supplier(Supplier_Id)
+);
+
+
+create table Medicine 
+(
+Medicine_id int identity(100000,1) Primary Key Clustered,
+Medicine_name varchar(100),
+Brand_name varchar(100),
+Mfg_Date Date,
+Exp_Date Date,
+Qty int,
+MRP Float,
+Pack_type varchar(50),
+Category varchar(50)
+);
+
+
