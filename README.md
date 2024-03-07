@@ -19,3 +19,50 @@ from the data we have determined the following analysis:
 4)	If we talk according to the age, middle age has more disease than older age.
 5)	Mostly Patients are coming from Vadodara, Gujarat.
 
+We can expand this project :
+Add date of birth in doctor,nurse,staff table
+Add category like OBC,UR in doctor,nurse,staff table
+Add table Insurance Company,Insurance plan,Claim,Undergoes,Surgery
+Insurance company table
+id
+name
+address
+phone
+email
+
+Insurance plan table
+id
+name
+description
+expiry date
+amount
+
+claim table
+claim id
+company id
+patient id
+amount
+
+undergoes table
+patient id
+ecg&eco
+blood test
+Physical_fitness_certi
+x_ray
+date
+
+surgery table
+id
+patient id
+doctor id
+surgery_name
+cost
+
+
+
+
+
+
+
+
+
